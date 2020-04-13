@@ -2,8 +2,22 @@
 ; 		Bubble sort of array, with syscalls
 ;
 ;      nasm -felf64 bubble_sort.asm && ld bubble_sort.o && ./a.out
+;      nasm -felf64 -g -F dwarf bubble_sort.asm && ld bubble_sort.o && gdb a.out
 ; ----------------------------------------------------------------------------------------
-			global    _start
+    BITS 64
+    
+section .data
+        array:	dq  7, 9, 8, 120, 2, 1
+        len	equ     ($ - array)/ 8
+
+section   .bss
+        digit_space     resb 100
+        digit_space_pos resb 8
+section .text
+
+global    _start
+       default rel
+
 _start:
 	mov	r9, 0                           ; r9 = i
         mov	r10, len                        ; r10 = len
@@ -86,11 +100,4 @@ exit:
         mov     rax,60
         mov     rdi, 0
         syscall
-section .data
-        array:	dq      7, 9, 8, 3, 2, 1
-        len	equ     ($ - array)/ 8
 
-section   .bss
-        digit_space     resb 100
-        digit_space_pos resb 8
-        
