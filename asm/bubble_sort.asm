@@ -1,22 +1,132 @@
 ; ----------------------------------------------------------------------------------------
 ; 		Bubble sort of array, with syscalls
 ;
-;      nasm -felf64 bubble_sort.asm && ld bubble_sort.o && ./a.out
-;      nasm -felf64 -g -F dwarf bubble_sort.asm && ld bubble_sort.o && gdb a.out
+;       nasm -felf64 bubble_sort.asm && ld bubble_sort.o && ./a.out
+;       nasm -felf64 -g -F dwarf bubble_sort.asm && ld bubble_sort.o && gdb a.out
+;       ndisasm -b 64 -o bubble_sort
 ; ----------------------------------------------------------------------------------------
-    BITS 64
-    
-section .data
-        array:	dq  7, 9, 8, 120, 2, 1
-        len	equ     ($ - array)/ 8
-
-section   .bss
-        digit_space     resb 100
-        digit_space_pos resb 8
-section .text
-
-global    _start
-       default rel
+bits 64
+    org    0x00400000      ;Program load offset
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
 
 _start:
 	mov	r9, 0                           ; r9 = i
@@ -101,3 +211,9 @@ exit:
         mov     rdi, 0
         syscall
 
+array:	dq  7, 9, 8, 120, 2, 1
+len	equ     ($ - array)/ 8
+
+
+digit_space     resb 100
+digit_space_pos resb 8
