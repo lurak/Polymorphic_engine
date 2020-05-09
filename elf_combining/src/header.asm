@@ -32,7 +32,7 @@ ehdrsize equ $ - ehdr
 ;64-bit ELF program header
 phdr:
     dd 1                    ;p_type:       loadable segment
-    dd 5                    ;p_flags       read and execute
+    dd 7                    ;p_flags       read and execute
     dq 0                    ;p_offset
     dq $$                   ;p_vaddr:      start of the current section
     dq $$                   ;p_paddr:      
@@ -45,15 +45,6 @@ phdrsize equ $ - phdr
 
 ;Hello World!/your program here
 _start:
-mov al, 12h ; set the key
-mov edi, 0xC9 ; starting address
-mov ecx, 0x004000C9  - codeStart ; length of encrypted block
-;    now decrypt the code, starting from the last byte
-decryptLoop:
-    xor byte [edi], al ; decrypt byte
-    dec edi ; move to the next byte
-    loop decryptLoop
-codeStart:
 ; File size calculation
 filesize equ $ - $$
 

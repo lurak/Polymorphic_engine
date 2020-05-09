@@ -65,3 +65,13 @@ codeEnd:
 ; File size calculation
 filesize equ $ - $$
 
+mov al, 12h
+; set the key
+;mov edi, 0xC9 ; starting address
+;mov ecx, 0x004000C9  - codeStart ; length of encrypted block
+;;    now decrypt the code, starting from the last byte
+;decryptLoop:
+;    xor byte [edi], al ; decrypt byte
+;    dec edi ; move to the next byte
+;    loop decryptLoop
+;codeStart:
