@@ -18,6 +18,7 @@ class SimplePol:
         self.add_sub_lst_im = list()
         self.add_sub_lst_reg = list()
         self.register_lst = list()
+        self.mul_lst = list()
 
     def reader(self):
         """
@@ -74,6 +75,17 @@ class SimplePol:
         """
         self.parser(r"add|sub", self.add_sub_lst)
 
+    def parser_mul(self):
+        """
+        Find in asm file all mul commands amd related nov commands.
+        :return:
+        """
+        self.parser(r"mul", self.mul_lst)
+        for i in range(len(self.mul_lst)):
+            index = self.content.index(self.mul_lst[i])
+            self.mul_lst.insert(i, self.content[index-1])
+            self.mul_lst.insert(i, self.content[index-2])
+
     def classification_add_sub(self):
         """
         Function to divide to different lists add and sub command. Add and sub with
@@ -81,7 +93,7 @@ class SimplePol:
         :return: None
         """
         for i in range(len(self.add_sub_lst)):
-            if re.search(r', ?[0-9]*', self.add_sub_lst[i][0]):
+            if re.search(r', [0-9]*', self.add_sub_lst[i][0]):
                 self.add_sub_lst_im.append(self.add_sub_lst[i])
             else:
                 self.add_sub_lst_reg.append(self.add_sub_lst[i])
@@ -225,8 +237,8 @@ class SimplePol:
         :return: None
         """
         index = self.content.index(element)
-        self.content.insert(index, ['push eax'])
-        self.content.insert(index, ['pop eax'])
+        self.content.insert(index, ['pop r10'])
+        self.content.insert(index, ['push r10'])
 
     def stack_nop_adder(self, element):
         """
@@ -235,9 +247,9 @@ class SimplePol:
         :return: None
         """
         index = self.content.index(element)
-        self.content.insert(index, ['push eax'])
+        self.content.insert(index, ['pop r10'])
         self.content.insert(index, ['nop'])
-        self.content.insert(index, ['pop eax'])
+        self.content.insert(index, ['push r10'])
 
     def commands_transformer(self):
         """
@@ -277,6 +289,30 @@ class SimplePol:
             else:
                 self.add_sub_adder(self.add_sub_lst_reg[i])
 
+    def mul_transform(self):
+        """
+        Function to transform a mul command.
+        :return: None
+        """
+        for i in range(2, len(self.mul_lst), 3):
+            choice = random.choice([i-1, i-2])
+            element = self.mul_lst[choice]
+            length = len(element[0])
+            number = str()
+            register = str()
+            while element[0][length - 1] != ',':
+                number += element[0][length - 1]
+                length -= 1
+            number = int(number[::-1])
+            div = self.number_division(number)
+            line = self.line_maker(element[0], div)
+            self.content[self.content.index(element)] = [line]
+            while element[0][length-1] != ' ':
+                register += element[0][length - 1]
+                length -= 1
+            register = register[::-1]
+            self.content.insert(self.content.index([line]) + 1, ['add {} {}'.format(register, str(number-div))])
+
     def polymorph(self):
         """
         Make code polymorphous and write it to new asm file.
@@ -284,11 +320,13 @@ class SimplePol:
         """
         self.reader()
         self.parser_add_sub()
+        self.parser_mul()
         self.parser_commands()
         self.parser_register()
         self.classification_add_sub()
         self.commands_transformer()
         self.add_sub_transformer()
+        self.mul_transform()
         content = str()
         for i in range(len(self.content)):
             content += self.content[i][0]
@@ -301,4 +339,3 @@ class SimplePol:
 if __name__ == "__main__":
     a = SimplePol("old_bubble.asm")
     a.polymorph()
-    print(a.register_lst)
