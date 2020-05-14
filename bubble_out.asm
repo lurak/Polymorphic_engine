@@ -19,177 +19,187 @@ global    _start
 default rel
 
 _start:
-pop eax
+push r10
 nop
-push eax
+pop r10
 mov	r9, 0                           ; r9 = i
-pop eax
 nop
-push eax
 mov	r10, len                        ; r10 = len
-pop eax
-push eax
-sub	r10,1
+sub	r10,2
+aad	r10,1
 outer_loop:
-sub eax, 6
-add eax, 6
+sub eax, 8
+add eax, 8
 cmp	r9,r10                          ; if i < 10 -> outer_loop done
-sub eax, 4
-add eax, 4
-je	done
-pop eax
 nop
-push eax
+je	done
+push r10
+pop r10
 mov	r8, 0                           ; r8 = j
 inner_loop:
-pop eax
+push r10
 nop
-push eax
+pop r10
 mov	rax, qword array
-nop
+sub eax, 9
+add eax, 9
 mov	rsi, [rax +  r8*8]              ; rsi = array[j]
-sub eax, 7
-add eax, 7
+push r10
+nop
+pop r10
 mov	rdi, [rax + (r8 + 1)*8]         ; rdi = array[j+1]
-pop eax
-push eax
+sub eax, 1
+add eax, 1
 cmp	rsi, rdi                        ; if (rsi > rdi){swapping}; else skip
 jl	skip
 ; swapping
-pop eax
-nop
-push eax
+push r10
+pop r10
 mov	rbx, [rax +  r8*8]              ; temp1 = d[j]
-pop eax
-push eax
-mov	rcx, [rax + (r8 + 1)*8]         ; temp2 = d[j+1]
-sub eax, 5
-add eax, 5
-mov	[rax +  r8*8], rcx              ; d[j] = temp2
+push r10
 nop
+pop r10
+mov	rcx, [rax + (r8 + 1)*8]         ; temp2 = d[j+1]
+push r10
+nop
+pop r10
+mov	[rax +  r8*8], rcx              ; d[j] = temp2
+push r10
+nop
+pop r10
 mov	[rax + (r8 + 1)*8], rbx         ; d[j+1]= temp1
 skip:
-sub eax, 3
-add eax, 3
+nop
 mov	r11, r10                        ; r11 = len - i - 1
-nop
+push r10
+pop r10
 sub	r11, r9
-nop
+push r10
+pop r10
 sub	r11, 1
 nop
 cmp	r8, r11                         ; if j < len - i - 1 ->  inner_loop done i+= 1
-pop eax
+push r10
 nop
-push eax
+pop r10
 je 	inner_loop_done
 inc 	r8                              ; else j += 1
-pop eax
+push r10
 nop
-push eax
+pop r10
 jmp 	inner_loop
 inner_loop_done:
 inc 	r9
-sub eax, 3
-add eax, 3
+sub eax, 6
+add eax, 6
 jmp 	outer_loop
 
 done:
+push r10
 nop
+pop r10
 mov	r9,0
-pop eax
-push eax
+push r10
+pop r10
 mov     r10, len
 push	rbx				; align stack
 print_loop:
-pop eax
-nop
-push eax
+push r10
+pop r10
 cmp	r9,r10
-nop
+sub eax, 7
+add eax, 7
 je	exit
-pop eax
-nop
-push eax
+push r10
+pop r10
 mov	r11, qword array
+push r10
 nop
+pop r10
 mov	rax, [r11 + r9*8]
 call    _print_RAX
 inc     r9
-pop eax
-push eax
+sub eax, 1
+add eax, 1
 jmp     print_loop
 
 _print_RAX:
-sub eax, 3
-add eax, 3
+sub eax, 6
+add eax, 6
 mov     rcx, digit_space
-pop eax
 nop
-push eax
-nop
+push r10
+pop r10
 mov     rbx,10
-pop eax
-push eax
+push r10
+nop
+pop r10
 mov     [rcx],rbx
 inc     rcx
-pop eax
-push eax
+sub eax, 4
+add eax, 4
 nop
 nop
 mov     [digit_space_pos], rcx
 _print_RAX_loop:
-pop eax
-push eax
+sub eax, 1
+add eax, 1
 mov     rdx,0
 mov     rbx,10
 div     rbx
 push    rax
-add     rdx,17
-add     rdx,31
-nop
+push r10
+pop r10
+add     rdx, 48
+push r10
+pop r10
 mov     rcx,[digit_space_pos]
+push r10
 nop
+pop r10
 mov     [rcx],dl
 inc     rcx
 mov     [digit_space_pos], rcx
 
 pop     rax
-nop
+sub eax, 6
+add eax, 6
 cmp     rax,0
 jne     _print_RAX_loop
 
 _print_RAX_loop2:
-sub eax, 1
-add eax, 1
-sub eax, 5
-add eax, 5
+sub eax, 3
+add eax, 3
+sub eax, 4
+add eax, 4
 mov     rcx, [digit_space_pos]
-pop eax
-push eax
+sub eax, 8
+add eax, 8
 mov     rax, 1
-sub eax, 9
-add eax, 9
+push r10
+nop
+pop r10
 mov     rdi, 1
-pop eax
 nop
-push eax
 mov     rsi, rcx
-nop
+push r10
+pop r10
 mov     rdx, 1
 syscall
 mov     rcx, [digit_space_pos]
 dec     rcx
 mov     [digit_space_pos], rcx
-sub eax, 0
-add eax, 0
+push r10
+nop
+pop r10
 cmp     rcx, digit_space
 jge     _print_RAX_loop2
 ret
 exit:
 nop
 mov     rax,60
-pop eax
+push r10
 nop
-push eax
+pop r10
 mov     rdi, 0
 syscall
