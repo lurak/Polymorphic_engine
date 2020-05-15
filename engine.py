@@ -52,14 +52,22 @@ class SimplePol:
                 if self.content[i][0][length-1] == ',':
                     while self.content[i][0][length-1] != ' ' and self.content[i][0][length-1] != '\t':
                         length -= 1
-                        register += self.content[i][0][length-1]
+                        if self.content[i][0][length - 1].isalnum():
+                            register += self.content[i][0][length-1]
+                        else:
+                            break
                     break
                 length -= 1
             if register:
-                register = register[:-1]
                 register = register[::-1]
                 self.register_lst.append(register)
         self.register_lst = list(set(self.register_lst))
+        trash = list()
+        for i in range(len(self.register_lst)):
+            if len(self.register_lst[i]) > 3 or len(self.register_lst[i]) < 2:
+                trash.append(self.register_lst[i])
+        for i in range(len(trash)):
+            self.register_lst.remove(trash[i])
 
     def parser_commands(self):
         """
@@ -93,7 +101,7 @@ class SimplePol:
         :return: None
         """
         for i in range(len(self.add_sub_lst)):
-            if re.search(r', [0-9]*', self.add_sub_lst[i][0]):
+            if re.search(r', ?[0-9]+', self.add_sub_lst[i][0]):
                 self.add_sub_lst_im.append(self.add_sub_lst[i])
             else:
                 self.add_sub_lst_reg.append(self.add_sub_lst[i])
@@ -227,8 +235,8 @@ class SimplePol:
         """
         index = self.content.index(element)
         number = self.number_division(10)
-        self.content.insert(index, ['add eax, {}'.format(str(number))])
         self.content.insert(index, ['sub eax, {}'.format(str(number))])
+        self.content.insert(index, ['add eax, {}'.format(str(number))])
 
     def stack_adder(self, element):
         """
@@ -339,3 +347,4 @@ class SimplePol:
 if __name__ == "__main__":
     a = SimplePol("old_bubble.asm")
     a.polymorph()
+    print(a.register_lst)
