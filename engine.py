@@ -19,6 +19,7 @@ class SimplePol:
         self.add_sub_lst_reg = list()
         self.register_lst = list()
         self.mul_lst = list()
+        self.cmp_lst = list()
 
     def reader(self):
         """
@@ -74,7 +75,7 @@ class SimplePol:
         Find all mov, cmp, jmp,je,jk commands in asm file.
         :return: None
         """
-        self.parser(r"mov|cmp|jmp|je|jk", self.mov_cmp_jmp_je_jk_lst)
+        self.parser(r"mov|jmp|je|jk", self.mov_cmp_jmp_je_jk_lst)
 
     def parser_add_sub(self):
         """
@@ -82,6 +83,13 @@ class SimplePol:
         :return: None
         """
         self.parser(r"add|sub", self.add_sub_lst)
+
+    def parser_cmp(self):
+        """
+        Find all cmp commands in asm file.
+        :return: None
+        """
+        self.parser(r"cmp", self.cmp_lst)
 
     def parser_mul(self):
         """
@@ -259,6 +267,28 @@ class SimplePol:
         self.content.insert(index, ['nop'])
         self.content.insert(index, ['push r10'])
 
+    def swap_of_reg(self, element):
+        """
+        Swap to registers in cmp command
+        :param element: list of elements
+        :return: None
+        """
+        l_reg = str()
+        f_reg = str()
+        length = len(element[0]) - 1
+        while element[0][length] != ',':
+            l_reg += element[0][length]
+            length -= 1
+        while element[0][length] != 'p':
+            f_reg += element[0][length]
+            length -= 1
+        l_reg = l_reg[:-1]
+        l_reg = l_reg[::-1]
+        f_reg = f_reg[:-1]
+        f_reg = f_reg[::-1]
+        f_reg = f_reg[:-1]
+        self.content[self.content.index(element)] = [f"cmp {l_reg}, {f_reg}"]
+
     def commands_transformer(self):
         """
         Modify every mov, cmp, jmp, jk, je command.
@@ -321,6 +351,20 @@ class SimplePol:
             register = register[::-1]
             self.content.insert(self.content.index([line]) + 1, ['add {} {}'.format(register, str(number-div))])
 
+    def cmp_transform(self):
+        """
+        Function to transform cmp command.
+        :return: None
+        """
+        for i in range(len(self.cmp_lst)):
+            choice = random.choice([1, 2, 3])
+            if choice == 1:
+                self.nope_adder(self.cmp_lst[i])
+            elif choice == 2:
+                self.stack_adder(self.cmp_lst[i])
+            else:
+                self.swap_of_reg(self.cmp_lst[i])
+
     def polymorph(self):
         """
         Make code polymorphous and write it to new asm file.
@@ -331,20 +375,22 @@ class SimplePol:
         self.parser_mul()
         self.parser_commands()
         self.parser_register()
+        self.parser_cmp()
         self.classification_add_sub()
         self.commands_transformer()
         self.add_sub_transformer()
         self.mul_transform()
+        self.cmp_transform()
         content = str()
         for i in range(len(self.content)):
             content += self.content[i][0]
             if i != len(self.content) - 1:
                 content += '\n'
-        with open("bubble_out.asm", 'w') as f:
+        with open("out.asm", 'w') as f:
             f.write(content)
 
 
 if __name__ == "__main__":
-    a = SimplePol("old_bubble.asm")
+    a = SimplePol("simple.asm")
     a.polymorph()
     print(a.register_lst)

@@ -2,16 +2,17 @@ BITS 64
 section .text
 
 _start:
-nop
+add eax, 5
+sub eax, 5
 mov	r9, 0
-nop
-mov r10, 10
-nop
+push r10
+pop r10
+mov	r10, 10
+push r10
+pop r10
 mov eax, 5
 nop
-sub	r10, 1
-add eax,8
-sub eax,1
-pop eax
-push eax
-cmp r9, r10
+sub	r10,1
+add eax,11
+sub eax,4
+cmp r10, r9

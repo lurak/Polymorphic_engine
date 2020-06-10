@@ -7,3 +7,4 @@ _start:
     mov eax, 5
     sub	r10,1
     add eax, 7
+    cmp r9, r10
