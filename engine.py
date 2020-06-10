@@ -386,11 +386,11 @@ class SimplePol:
             content += self.content[i][0]
             if i != len(self.content) - 1:
                 content += '\n'
-        with open("out.asm", 'w') as f:
+        with open("bubble_out.asm", 'w') as f:
             f.write(content)
 
 
 if __name__ == "__main__":
-    a = SimplePol("simple.asm")
+    a = SimplePol("old_bubble.asm")
     a.polymorph()
     print(a.register_lst)
