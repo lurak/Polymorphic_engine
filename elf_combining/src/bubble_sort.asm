@@ -1,10 +1,11 @@
 bits 64
-    org   0x400078
+    org   0x40009f
+ 
+ 
 
  
  
 ; Don't touch code above, his dynamic changing
-codeStart:
 	mov	r9, 0
     mov	r10, len
     sub	r10,1
@@ -82,6 +83,9 @@ _print_RAX_loop2:
         cmp     rcx, digit_space
         jge     _print_RAX_loop2
         ret
+        nop
+        nop
+        nop
         nop
 codeEnd:
         mov     rax,60

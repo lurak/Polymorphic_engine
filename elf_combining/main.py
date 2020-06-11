@@ -3,7 +3,7 @@ import contextlib
 import mmap
 out_name = "a_hello"
 header_name = "header"
-main_name = "test"
+main_name = "bubble_sort"
 temp_key = b'\x8eNT\xdee\x96\xda\xec'
 
 compile_header = f"nasm -fbin -o in/{header_name} src/{header_name}.asm"
