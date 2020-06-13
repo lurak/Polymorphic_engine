@@ -11,6 +11,9 @@ class SimplePol:
         Initialisation of path to file and lists for parsing.
         :param path: string.
         """
+        self.border = 0
+        self.all_registers_lst = ['rdx', 'rax', 'rcx', 'rsi', 'r11', 'rdi', 'rbx', 'r8', 'r10', 'r9', 'r12', 'r13',
+                                  'r14', 'r15', 'rbp', 'rsp']
         self.path = path
         self.content = list()
         self.mov_cmp_jmp_je_jk_lst = list()
@@ -94,13 +97,16 @@ class SimplePol:
     def parser_mul(self):
         """
         Find in asm file all mul commands amd related nov commands.
-        :return:
+        :return: None
         """
         self.parser(r"mul", self.mul_lst)
         for i in range(len(self.mul_lst)):
             index = self.content.index(self.mul_lst[i])
             self.mul_lst.insert(i, self.content[index-1])
             self.mul_lst.insert(i, self.content[index-2])
+
+    def set_border(self):
+        self.border = 0
 
     def classification_add_sub(self):
         """
@@ -241,10 +247,25 @@ class SimplePol:
         :param element: list of elements
         :return: None
         """
+        border = 0
+        reg = str()
+        for i in range(len(self.all_registers_lst)):
+            if self.all_registers_lst[i] not in self.register_lst:
+                reg = self.all_registers_lst[i]
+                break
         index = self.content.index(element)
+        if index < border:
+            return 0
+        lim = index % 2
+        var = [i for i in range(lim, index)]
+        while True:
+            choice_1 = random.choice(var)
+            choice_2 = random.choice(var)
+            if choice_1 != choice_2 and choice_1 > border and choice_2 > border:
+                break
         number = self.number_division(10)
-        self.content.insert(index, ['sub eax, {}'.format(str(number))])
-        self.content.insert(index, ['add eax, {}'.format(str(number))])
+        self.content.insert(index, ['sub {}, {}'.format(reg, str(number))])
+        self.content.insert(index, ['add {}, {}'.format(reg,  str(number))])
 
     def stack_adder(self, element):
         """
@@ -252,9 +273,14 @@ class SimplePol:
         :param element: list of elements
         :return: None
         """
+        reg = str()
+        for i in range(len(self.all_registers_lst)):
+            if self.all_registers_lst[i] not in self.register_lst:
+                reg = self.all_registers_lst[i]
+                break
         index = self.content.index(element)
-        self.content.insert(index, ['pop r10'])
-        self.content.insert(index, ['push r10'])
+        self.content.insert(index, [f'pop {reg}'])
+        self.content.insert(index, [f'push {reg}'])
 
     def stack_nop_adder(self, element):
         """
@@ -262,10 +288,15 @@ class SimplePol:
         :param element: list of string
         :return: None
         """
+        reg = str()
+        for i in range(len(self.all_registers_lst)):
+            if self.all_registers_lst[i] not in self.register_lst:
+                reg = self.all_registers_lst[i]
+                break
         index = self.content.index(element)
-        self.content.insert(index, ['pop r10'])
+        self.content.insert(index, [f'pop {reg}'])
         self.content.insert(index, ['nop'])
-        self.content.insert(index, ['push r10'])
+        self.content.insert(index, [f'push {reg}'])
 
     def swap_of_reg(self, element):
         """
@@ -273,6 +304,8 @@ class SimplePol:
         :param element: list of elements
         :return: None
         """
+        if len(element[0]) > 16:
+            return 0
         l_reg = str()
         f_reg = str()
         length = len(element[0]) - 1
@@ -282,16 +315,20 @@ class SimplePol:
         while element[0][length] != 'p':
             f_reg += element[0][length]
             length -= 1
-        l_reg = l_reg[:-1]
+        if l_reg[-1] == ' ':
+            l_reg = l_reg[:-1]
         l_reg = l_reg[::-1]
-        f_reg = f_reg[:-1]
+        if f_reg[-1] == ' ':
+            f_reg = f_reg[:-1]
         f_reg = f_reg[::-1]
         f_reg = f_reg[:-1]
+        if f_reg.isdecimal() or l_reg.isdecimal():
+            return 0
         self.content[self.content.index(element)] = [f"cmp {l_reg}, {f_reg}"]
 
     def commands_transformer(self):
         """
-        Modify every mov, cmp, jmp, jk, je command.
+        Modify every mov, jmp, jk, je command.
         :return: None
         """
         for i in range(len(self.mov_cmp_jmp_je_jk_lst)):
@@ -310,6 +347,7 @@ class SimplePol:
         Modify every add and sub command.
         :return: None
         """
+        self.set_border()
         for i in range(len(self.add_sub_lst_im)):
             choice = random.choice([1,2,3])
             if choice == 1:
@@ -386,11 +424,11 @@ class SimplePol:
             content += self.content[i][0]
             if i != len(self.content) - 1:
                 content += '\n'
-        with open("bubble_out.asm", 'w') as f:
+        with open("out.asm", 'w') as f:
             f.write(content)
 
 
 if __name__ == "__main__":
-    a = SimplePol("old_bubble.asm")
+    a = SimplePol("simple.asm")
     a.polymorph()
     print(a.register_lst)
