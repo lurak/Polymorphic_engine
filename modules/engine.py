@@ -430,7 +430,7 @@ class SimplePol:
             content += self.content[i][0]
             if i != len(self.content) - 1:
                 content += '\n'
-        with open(f"{self.path}.asm", 'w') as f:
+        with open(f"{self.path}", 'w') as f:
             f.write(content)
 
 
