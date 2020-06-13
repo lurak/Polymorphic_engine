@@ -42,11 +42,9 @@ phdrsize equ $ - phdr
 
 _start:
 push rdx
-nop
 pop rdx
 mov r10, 0x8E4E54DE6596DAEC ; set the key
-add rdx, 5
-sub rdx, 5
+nop
 mov rax, 0x400213 ; starting address DYNAMICALLY CHANGING
 push rdx
 pop rdx
@@ -54,19 +52,21 @@ mov rcx, 0x160 ; length of encrypted block DYNAMICALLY CHANGING
 
 ; now decrypt the code, starting from the last byte
 decryptLoop:
-nop
+push rdx
+pop rdx
 sub rax, 8        ; move to the next byte
 push rdx
+nop
 pop rdx
 mov rbx,[rax]
 
 xor rbx,  r10 ; decrypt qword
 ; xor rbx,  r10
-push rdx
-nop
-pop rdx
+add rdx, 5
+sub rdx, 5
 mov qword [rax], rbx
-nop
+push rdx
+pop rdx
 sub rcx, 8
 jnz decryptLoop
 ; File size calculation

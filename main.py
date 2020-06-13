@@ -2,7 +2,7 @@ import os
 import re
 from modules.engine import SimplePol
 
-out_name = "a_hello"
+out_name = "encrypted"
 header_name = "header"
 main_name = "bubble_sort"
 temp_key = b'\x8eNT\xdee\x96\xda\xec'
