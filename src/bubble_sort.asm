@@ -1,5 +1,5 @@
 bits 64
-    org    0x4000ba ; DYNAMICALLY CHANGING
+    org    0x4000b3 ; DYNAMICALLY CHANGING
 
 	mov	r9, 0
     mov	r10, len

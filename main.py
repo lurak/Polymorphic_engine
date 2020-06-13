@@ -26,7 +26,7 @@ def change_asm_file(file, template, to):
 a = SimplePol(f"src/{header_name}.asm")
 a.polymorph()
 # HERE polymorphism header_name function
-
+header_name += "_pol"
 header_size = compile_file(header_name)
 
 change_asm_file(f"src/{main_name}.asm", r'(org)\s+(0[xX])?[a-fA-F0-9]+', f"org    {hex(header_size + 0x00400000)}")
