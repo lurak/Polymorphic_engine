@@ -1,9 +1,6 @@
 ;name: elf64header.asm
 ;
-;build: nasm -fbin -o header header.asm && chmod +x header 
-;adapted from: http://www.muppetlabs.com/~breadbox/software/tiny/teensy.html
-;http://blog.markloiseau.com/2012/05/tiny-64-bit-elf-executables/
-
+;build: nasm -fbin -o header header.asm && chmod +x header
 bits 64
     org    0x00400000      ;Program load offset
 
@@ -60,4 +57,3 @@ sub rcx, 8
 jnz decryptLoop
 ; File size calculation
 filesize equ $ - $$
-
