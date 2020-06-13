@@ -1,11 +1,6 @@
 bits 64
-    org   0x40009f
- 
- 
+    org    0x4000a3 ; DYNAMICALLY CHANGING
 
- 
- 
-; Don't touch code above, his dynamic changing
 	mov	r9, 0
     mov	r10, len
     sub	r10,1

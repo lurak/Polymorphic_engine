@@ -45,8 +45,8 @@ phdrsize equ $ - phdr
 
 _start:
 mov r10, 0x8E4E54DE6596DAEC ; set the key
-mov rax, 0x4001FF ; starting address
-mov rcx, 0x4001FF - 0x40009f ; length of encrypted block
+mov rax, 0x400203 ; starting address DYNAMICALLY CHANGING
+mov rcx, 0x160 ; length of encrypted block DYNAMICALLY CHANGING
 
 ; now decrypt the code, starting from the last byte
 decryptLoop:

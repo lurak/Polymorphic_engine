@@ -1,33 +1,39 @@
 import os
-import contextlib
-import mmap
+import re
+
 out_name = "a_hello"
 header_name = "header"
 main_name = "bubble_sort"
 temp_key = b'\x8eNT\xdee\x96\xda\xec'
 
-compile_header = f"nasm -fbin -o in/{header_name} src/{header_name}.asm"
-compile_main = f"nasm -fbin -o in/{main_name} src/{main_name}.asm"
 
-os.system(compile_header)
-header_size = os.path.getsize(f"in/{header_name}")
+def compile_file(file):
+    compile_str = f"nasm -fbin -o in/{file} src/{file}.asm"
+    os.system(compile_str)
+    return os.path.getsize(f"in/{file}")
 
-with open(f"src/{main_name}.asm", 'r+', encoding='utf8') as asm:
-    asm_txt = asm.read()
-    j = 19
-    s = asm_txt[j]
-    while s != " ":
-        asm.seek(j)
-        asm.write(" ")
-        j += 1
-        s = asm_txt[j]
-    asm.seek(19)
-    print(hex(header_size + 0x00400000))
-    asm.write(hex(header_size + 0x00400000)+"\n")
 
-os.system(compile_main)
+def change_asm_file(file, template, to):
+    with open(file, 'r+', encoding='utf8') as asm:
+        asm_txt = asm.read()
+        asm_txt = re.sub(template, to, asm_txt)
+        asm.seek(0)
+        asm.write(asm_txt)
+        asm.truncate()
 
-file_size = os.path.getsize(f"in/{main_name}")
+
+# HERE polymorphism header_name function
+
+header_size = compile_file(header_name)
+
+change_asm_file(f"src/{main_name}.asm", r'(org)\s+(0[xX])?[a-fA-F0-9]+', f"org    {hex(header_size + 0x00400000)}")
+
+file_size = compile_file(main_name)
+
+change_asm_file(f"src/{header_name}.asm", r'(mov)\s+(rax)\s*(,)\s*(0[xX])?[a-fA-F0-9]+',
+                f"mov rax, {hex(header_size + file_size + 0x00400000)}")
+change_asm_file(f"src/{header_name}.asm", r'(mov)\s+(rcx)\s*(,)\s*(0[xX])?[a-fA-F0-9]+', f"mov rcx, {hex(file_size)}")
+compile_file(header_name)
 
 print(f"header size: {header_size}")
 print(f"file size: {file_size}")
