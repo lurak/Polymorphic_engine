@@ -4,7 +4,7 @@ from modules.engine import SimplePol
 
 out_name = "encrypted"
 header_name = "header"
-main_name = "bubble_sort"
+main_name = "all_nop"
 temp_key = b'\x8eNT\xdee\x96\xda\xec'
 
 

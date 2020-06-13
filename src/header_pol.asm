@@ -41,32 +41,27 @@ dq 0x200000             ;p_align:      2^11=200000=11 bit boundaries
 phdrsize equ $ - phdr
 
 _start:
-push rdx
-pop rdx
+nop
 mov r10, 0x8E4E54DE6596DAEC ; set the key
 nop
-mov rax, 0x400213 ; starting address DYNAMICALLY CHANGING
-push rdx
-pop rdx
-mov rcx, 0x160 ; length of encrypted block DYNAMICALLY CHANGING
+mov rax, 0x4000f4 ; starting address DYNAMICALLY CHANGING
+nop
+mov rcx, 0x40 ; length of not_encrypted block DYNAMICALLY CHANGING
 
 ; now decrypt the code, starting from the last byte
 decryptLoop:
-push rdx
-pop rdx
-sub rax, 8        ; move to the next byte
-push rdx
 nop
-pop rdx
+sub rax, 8        ; move to the next byte
+add rdx, 3
+sub rdx, 3
 mov rbx,[rax]
 
 xor rbx,  r10 ; decrypt qword
 ; xor rbx,  r10
-add rdx, 5
-sub rdx, 5
+add rdx, 4
+sub rdx, 4
 mov qword [rax], rbx
-push rdx
-pop rdx
+nop
 sub rcx, 8
 jnz decryptLoop
 ; File size calculation
