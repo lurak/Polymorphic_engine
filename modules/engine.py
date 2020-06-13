@@ -6,6 +6,7 @@ class SimplePol:
     """
     Class to make from one asm file another one but polymorphic to the input file.
     """
+
     def __init__(self, path):
         """
         Initialisation of path to file and lists for parsing.
@@ -53,11 +54,11 @@ class SimplePol:
             length = len(self.content[i][0])
             register = str()
             while length != 0:
-                if self.content[i][0][length-1] == ',':
-                    while self.content[i][0][length-1] != ' ' and self.content[i][0][length-1] != '\t':
+                if self.content[i][0][length - 1] == ',':
+                    while self.content[i][0][length - 1] != ' ' and self.content[i][0][length - 1] != '\t':
                         length -= 1
                         if self.content[i][0][length - 1].isalnum():
-                            register += self.content[i][0][length-1]
+                            register += self.content[i][0][length - 1]
                         else:
                             break
                     break
@@ -102,8 +103,8 @@ class SimplePol:
         self.parser(r"mul", self.mul_lst)
         for i in range(len(self.mul_lst)):
             index = self.content.index(self.mul_lst[i])
-            self.mul_lst.insert(i, self.content[index-1])
-            self.mul_lst.insert(i, self.content[index-2])
+            self.mul_lst.insert(i, self.content[index - 1])
+            self.mul_lst.insert(i, self.content[index - 2])
 
     def set_border(self):
         self.border = 0
@@ -184,11 +185,11 @@ class SimplePol:
                 break
         number = int(exact_number[::-1])
         div = self.number_division(number)
-        choice = random.choice([1,2,3])
+        choice = random.choice([1, 2, 3])
         if choice == 1:
             self.division_adder_im_2(element, div, number)
         elif choice == 2:
-            self.division_adder_sub(element,div,number)
+            self.division_adder_sub(element, div, number)
         else:
             self.division_adder_im_3(element, div, number)
 
@@ -241,8 +242,8 @@ class SimplePol:
         :param number: number
         :return: None
         """
-        new_div = random.randint(number + 1,  number + div + 1)
-        self.content.insert(self.content.index(element), [self.line_maker(element[0] , new_div)])
+        new_div = random.randint(number + 1, number + div + 1)
+        self.content.insert(self.content.index(element), [self.line_maker(element[0], new_div)])
         self.content[self.content.index(element)] = \
             [self.line_maker(element[0], new_div - number, True)]
 
@@ -271,7 +272,7 @@ class SimplePol:
                 break
         number = self.number_division(10)
         self.content.insert(index, ['sub {}, {}'.format(reg, str(number))])
-        self.content.insert(index, ['add {}, {}'.format(reg,  str(number))])
+        self.content.insert(index, ['add {}, {}'.format(reg, str(number))])
 
     def stack_adder(self, element):
         """
@@ -355,7 +356,7 @@ class SimplePol:
         """
         self.set_border()
         for i in range(len(self.add_sub_lst_im)):
-            choice = random.choice([1,2,3])
+            choice = random.choice([1, 2, 3])
             if choice == 1:
                 self.nope_adder(self.add_sub_lst_im[i])
             elif choice == 2:
@@ -377,7 +378,7 @@ class SimplePol:
         :return: None
         """
         for i in range(2, len(self.mul_lst), 3):
-            choice = random.choice([i-1, i-2])
+            choice = random.choice([i - 1, i - 2])
             element = self.mul_lst[choice]
             length = len(element[0])
             number = str()
@@ -389,11 +390,11 @@ class SimplePol:
             div = self.number_division(number)
             line = self.line_maker(element[0], div)
             self.content[self.content.index(element)] = [line]
-            while element[0][length-1] != ' ':
+            while element[0][length - 1] != ' ':
                 register += element[0][length - 1]
                 length -= 1
             register = register[::-1]
-            self.content.insert(self.content.index([line]) + 1, ['add {} {}'.format(register, str(number-div))])
+            self.content.insert(self.content.index([line]) + 1, ['add {} {}'.format(register, str(number - div))])
 
     def cmp_transform(self):
         """
