@@ -1,34 +1,36 @@
 bits 64
-    org   0x400078
+    org   0x40009f
+ 
+ 
 
  
+ 
 ; Don't touch code above, his dynamic changing
-_start:
-	mov	r9, 0                           ; r9 = i
-        mov	r10, len                        ; r10 = len
-        sub	r10,1
+	mov	r9, 0
+    mov	r10, len
+    sub	r10,1
 outer_loop:
-	cmp	r9,r10                          ; if i < 10 -> outer_loop done
+	cmp	r9,r10
 	je	done
-	mov	r8, 0                           ; r8 = j
+	mov	r8, 0
 inner_loop:
         mov	rax, qword array
-        mov	rsi, [rax +  r8*8]              ; rsi = array[j]
-        mov	rdi, [rax + (r8 + 1)*8]         ; rdi = array[j+1]
-	cmp	rsi, rdi                        ; if (rsi > rdi){swapping}; else skip
+        mov	rsi, [rax +  r8*8]
+        mov	rdi, [rax + (r8 + 1)*8]
+	cmp	rsi, rdi
 	jl	skip
-                	; swapping
-        mov	rbx, [rax +  r8*8]              ; temp1 = d[j]
-        mov	rcx, [rax + (r8 + 1)*8]         ; temp2 = d[j+1]
-        mov	[rax +  r8*8], rcx              ; d[j] = temp2
-        mov	[rax + (r8 + 1)*8], rbx         ; d[j+1]= temp1
+
+        mov	rbx, [rax +  r8*8]
+        mov	rcx, [rax + (r8 + 1)*8]
+        mov	[rax +  r8*8], rcx
+        mov	[rax + (r8 + 1)*8], rbx
 skip:
-        mov	r11, r10                        ; r11 = len - i - 1
+        mov	r11, r10
 	sub	r11, r9
 	sub	r11, 1
-	cmp	r8, r11                         ; if j < len - i - 1 ->  inner_loop done i+= 1
+	cmp	r8, r11
 	je 	inner_loop_done
-	inc 	r8                              ; else j += 1
+	inc 	r8
         jmp 	inner_loop
 inner_loop_done:
         inc 	r9
@@ -37,10 +39,10 @@ inner_loop_done:
 done:
 	mov	r9,0
 	mov     r10, len
-	push	rbx				; align stack
+	push	rbx
 print_loop:
 	cmp	r9,r10
-	je	exit
+	je	codeEnd
 	mov	r11, qword array
 	mov	rax, [r11 + r9*8]
         call    _print_RAX
@@ -81,7 +83,11 @@ _print_RAX_loop2:
         cmp     rcx, digit_space
         jge     _print_RAX_loop2
         ret
-exit:
+        nop
+        nop
+        nop
+        nop
+codeEnd:
         mov     rax,60
         mov     rdi, 0
         syscall

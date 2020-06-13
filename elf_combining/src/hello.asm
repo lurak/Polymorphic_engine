@@ -1,5 +1,6 @@
 bits 64
-    org    0x40008b      ;Program load offset
+    org   0x400078
+      ;Program load offset
 _start:
 
     xor     rax,rax
