@@ -173,10 +173,16 @@ class SimplePol:
         """
         length = len(element[0])
         number = str()
+        exact_number = str()
         while element[0][length - 1] != ',':
             number += element[0][length - 1]
             length -= 1
-        number = int(number[::-1])
+        number = number.split()
+        for i in range(len(number)):
+            if number[i].isdecimal():
+                exact_number = number[i]
+                break
+        number = int(exact_number[::-1])
         div = self.number_division(number)
         choice = random.choice([1,2,3])
         if choice == 1:
