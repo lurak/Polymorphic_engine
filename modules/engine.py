@@ -453,6 +453,6 @@ class SimplePol:
 
 
 if __name__ == "__main__":
-    a = SimplePol("../tests/test.asm")
+    a = SimplePol("simple.asm")
     a.polymorph()
     print(a.register_lst)
