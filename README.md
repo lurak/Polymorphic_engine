@@ -14,7 +14,7 @@
 ![](https://img.shields.io/github/languages/count/lurak/Polymorphic_engine)
 
 # Polymorphic engine
-## First history
+## First some history
 First virus have no protection from av scanner. When av company catched virus they insert signature of this virus in database and av already new that this program is virus just with getting hash sum of the program.
 
 So Virus Exchange makes disguise code to prevent this. Idea is encrypt virus! Now only decryptor is naked, so only decryptor needs be polymorphic. 
@@ -36,10 +36,10 @@ merges this two files.
  ### Encrypting:
 Here we using xor-cipher, with ```0x8E4E54DE6596DAEC``` 8 byte key 
 #### Without encrypting: 
-![image](https://user-images.githubusercontent.com/44615981/84591698-30098f80-ae49-11ea-9500-b9db030b0afd.png?style=centerme)
+![image](https://user-images.githubusercontent.com/44615981/84591698-30098f80-ae49-11ea-9500-b9db030b0afd.png?style=centerme) </br>
 The body code in this program 52 nop (Opcode of the mnemonic nop is 90)
 #### With encrypting:
-![image](https://user-images.githubusercontent.com/44615981/84591944-f46fc500-ae4a-11ea-8d5c-0deff4e24191.png?style=centerme)
+![image](https://user-images.githubusercontent.com/44615981/84591944-f46fc500-ae4a-11ea-8d5c-0deff4e24191.png?style=centerme) </br>
 So when program stats, first-things-first it decrypt body code and after run this decrypted code.
 ## Quickstart
 
