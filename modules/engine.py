@@ -12,12 +12,14 @@ class SimplePol:
         Initialisation of path to file and lists for parsing.
         :param path: string.
         """
-        self.border = 0
+        self.stack_register = None
+        self.add_sub_register = None
+        self.border_pos = None
         self.all_registers_lst = ['rdx', 'rax', 'rcx', 'rsi', 'r11', 'rdi', 'rbx', 'r8', 'r10', 'r9', 'r12', 'r13',
                                   'r14', 'r15', 'rbp', 'rsp']
         self.path = path
         self.content = list()
-        self.mov_cmp_jmp_je_jk_lst = list()
+        self.mov_xor_jmp_je_jk_lst = list()
         self.add_sub_lst = list()
         self.add_sub_lst_im = list()
         self.add_sub_lst_reg = list()
@@ -79,7 +81,7 @@ class SimplePol:
         Find all mov, cmp, jmp,je,jk commands in asm file.
         :return: None
         """
-        self.parser(r"mov|jmp|je|jk", self.mov_cmp_jmp_je_jk_lst)
+        self.parser(r"mov|jmp|je|jk|xor", self.mov_xor_jmp_je_jk_lst)
 
     def parser_add_sub(self):
         """
@@ -107,7 +109,15 @@ class SimplePol:
             self.mul_lst.insert(i, self.content[index - 2])
 
     def set_border(self):
-        self.border = 0
+        """
+        Function to detect the first command in asm code
+        :return: None
+        """
+        for i in range(len(self.content)):
+            if self.content[i] in self.mov_xor_jmp_je_jk_lst or self.content[i] in self.cmp_lst or \
+                    self.content[i] in self.mul_lst or self.content[i] in self.add_sub_lst:
+                self.border_pos = self.content[i]
+                break
 
     def classification_add_sub(self):
         """
@@ -254,22 +264,17 @@ class SimplePol:
         :param element: list of elements
         :return: None
         """
-        border = 0
         reg = str()
-        for i in range(len(self.all_registers_lst)):
-            if self.all_registers_lst[i] not in self.register_lst:
-                reg = self.all_registers_lst[i]
-                break
+        if not self.add_sub_register:
+            for i in range(len(self.all_registers_lst)):
+                if self.all_registers_lst[i] not in self.register_lst\
+                        and self.all_registers_lst[i] != self.stack_register:
+                    reg = self.all_registers_lst[i]
+                    self.add_sub_register = self.all_registers_lst[i]
+                    break
+        else:
+            reg = self.add_sub_register
         index = self.content.index(element)
-        if index < border:
-            return 0
-        lim = index % 2
-        var = [i for i in range(lim, index)]
-        while True:
-            choice_1 = random.choice(var)
-            choice_2 = random.choice(var)
-            if choice_1 != choice_2 and choice_1 > border and choice_2 > border:
-                break
         number = self.number_division(10)
         self.content.insert(index, ['sub {}, {}'.format(reg, str(number))])
         self.content.insert(index, ['add {}, {}'.format(reg, str(number))])
@@ -281,10 +286,15 @@ class SimplePol:
         :return: None
         """
         reg = str()
-        for i in range(len(self.all_registers_lst)):
-            if self.all_registers_lst[i] not in self.register_lst:
-                reg = self.all_registers_lst[i]
-                break
+        if not self.stack_register:
+            for i in range(len(self.all_registers_lst)):
+                if self.all_registers_lst[i] not in self.register_lst\
+                        and self.add_sub_register != self.all_registers_lst[i]:
+                    reg = self.all_registers_lst[i]
+                    self.stack_register = self.all_registers_lst[i]
+                    break
+        else:
+            reg = self.stack_register
         index = self.content.index(element)
         self.content.insert(index, [f'pop {reg}'])
         self.content.insert(index, [f'push {reg}'])
@@ -296,10 +306,15 @@ class SimplePol:
         :return: None
         """
         reg = str()
-        for i in range(len(self.all_registers_lst)):
-            if self.all_registers_lst[i] not in self.register_lst:
-                reg = self.all_registers_lst[i]
-                break
+        if not self.stack_register:
+            for i in range(len(self.all_registers_lst)):
+                if self.all_registers_lst[i] not in self.register_lst \
+                        and self.add_sub_register != self.all_registers_lst[i]:
+                    reg = self.all_registers_lst[i]
+                    self.stack_register = self.all_registers_lst[i]
+                    break
+        else:
+            reg = self.stack_register
         index = self.content.index(element)
         self.content.insert(index, [f'pop {reg}'])
         self.content.insert(index, ['nop'])
@@ -338,16 +353,16 @@ class SimplePol:
         Modify every mov, jmp, jk, je command.
         :return: None
         """
-        for i in range(len(self.mov_cmp_jmp_je_jk_lst)):
+        for i in range(len(self.mov_xor_jmp_je_jk_lst)):
             choice = random.choice([1, 2, 3, 4])
             if choice == 1:
-                self.nope_adder(self.mov_cmp_jmp_je_jk_lst[i])
+                self.nope_adder(self.mov_xor_jmp_je_jk_lst[i])
             elif choice == 2:
-                self.add_sub_adder(self.mov_cmp_jmp_je_jk_lst[i])
+                self.add_sub_adder(self.mov_xor_jmp_je_jk_lst[i])
             elif choice == 3:
-                self.stack_nop_adder(self.mov_cmp_jmp_je_jk_lst[i])
+                self.stack_nop_adder(self.mov_xor_jmp_je_jk_lst[i])
             else:
-                self.stack_adder(self.mov_cmp_jmp_je_jk_lst[i])
+                self.stack_adder(self.mov_xor_jmp_je_jk_lst[i])
 
     def add_sub_transformer(self):
         """
@@ -403,6 +418,7 @@ class SimplePol:
         """
         for i in range(len(self.cmp_lst)):
             choice = random.choice([1, 2, 3])
+            choice = 3
             if choice == 1:
                 self.nope_adder(self.cmp_lst[i])
             elif choice == 2:
@@ -421,6 +437,7 @@ class SimplePol:
         self.parser_commands()
         self.parser_register()
         self.parser_cmp()
+        self.set_border()
         self.classification_add_sub()
         self.commands_transformer()
         self.add_sub_transformer()
