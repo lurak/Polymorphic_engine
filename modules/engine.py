@@ -163,7 +163,7 @@ class SimplePol:
             new_line = ''.join(new_line)
         elif reverse and new_line[0] == 's':
             new_line = list(new_line)
-            new_line[0], new_line[1], new_line[2] = 'a', 'a', 'd'
+            new_line[0], new_line[1], new_line[2] = 'a', 'd', 'd'
             new_line = ''.join(new_line)
         return new_line
 
@@ -453,6 +453,6 @@ class SimplePol:
 
 
 if __name__ == "__main__":
-    a = SimplePol("simple.asm")
+    a = SimplePol("../tests/test.asm")
     a.polymorph()
     print(a.register_lst)
