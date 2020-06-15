@@ -55,6 +55,9 @@ $ git clone https://github.com/lurak/Polymorphic_engine
 ### Usage :zap:
   - Change ```src/bubble_sort.asm``` on some script 
   - Run main.py
+#### REMARK 
+The algorithm of decrypting assume that your program size divided by 8 (length of key), so if your code don't divides by 8
+just add some ```nop``` to your program.   
 ### Authors
  - Ihor Titov (polymorphism)
  - Danylo Sluzhynskyi (encrypting)
